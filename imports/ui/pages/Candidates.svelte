@@ -5,7 +5,6 @@
   import { Session } from "meteor/session";
   import { Tracker } from "meteor/tracker";
   import SkillModal from "../components/SkillModal.svelte";
-  import CandidateFilter from "../components/CandidateFilter.svelte";
 
   let candidates = CandidateCollection.find({}).fetch();
   let skills = SkillCollection.find({}).fetch();
@@ -74,13 +73,11 @@
   //   sortOption[column] = Session.get("sort")?.[column] === 1 ? -1 : 1;
   //   Session.set("sort", sortOption);
   // }
-
-  // You can extend the filter functionality as per your requirements
   function filter(event) {
-    const filterValue = event.target.value.toLowerCase();
-    candidates = CandidateCollection.find({
-      name: { $regex: filterValue, $options: "i" },
-    }).fetch();
+  const filterValue = event.target.value.toLowerCase();
+  candidates = CandidateCollection.find({
+    name: { $regex: filterValue, $options: "i" },
+  }).fetch();
   }
 </script>
 
@@ -102,7 +99,6 @@
       />
     </div>
   </div>
-  <!-- <CandidateFilter /> -->
   <div class="mt-4 flow-root">
     <div class=" overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -148,12 +144,14 @@
                 >
                 {#each skills as skill}
                   {#if skill.candidateId === candidate._id}
-                    <td class="px-6 py-4 whitespace-no-wrap"
-                      >{skill.skillList?.[0].name}</td
-                    >
-                    <td class="px-6 py-4 whitespace-no-wrap"
-                      >{skill.skillList?.[0].score}</td
-                    >
+                  {#if skill.skillList.length > 0}
+                  <td class="px-6 py-4 whitespace-no-wrap"
+                  >{skill.skillList?.[0].name}</td
+                  >
+                  <td class="px-6 py-4 whitespace-no-wrap"
+                  >{skill.skillList?.[0].score}</td
+                  >
+                  {/if}
                   {/if}
                 {/each}
               </tr>
