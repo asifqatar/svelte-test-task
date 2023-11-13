@@ -1,5 +1,4 @@
 import { CandidateCollection, SkillCollection } from "/imports/api/candidate";
-import "/imports/api/candidate/publications";
 import { Meteor } from "meteor/meteor";
 import { LinksCollection } from "/imports/api/links";
 
