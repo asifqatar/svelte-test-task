@@ -11,20 +11,24 @@
   let isModal = false;
   let showModal = false;
   let selectedModalIndex = null;
-  console.log(selectedModalIndex, "selectedModalIndex");
-  console.log(skills, "skillsskills");
-  console.log(candidates, "candidtescandidates");
 
   onMount(() => {
-    Meteor.subscribe("candidateSkills");
+    const candidateSubscription = Meteor.subscribe("allCandidates");
+    const skillsSubscription = Meteor.subscribe("candidateSkills");
+
     Tracker.autorun(() => {
-      candidateSkills = SkillCollection.find({}).fetch();
+      if (candidateSubscription.ready() && skillsSubscription.ready()) {
+        candidates = CandidateCollection.find(
+          {},
+          { sort: Session.get("sort") || {} }
+        ).fetch();
+        skills = SkillCollection.find({}).fetch();
+      }
     });
   });
 
   function openModal(index) {
     selectedModalIndex = index;
-    console.log(index, "index");
     showModal = true;
   }
 
@@ -58,26 +62,32 @@
     toggleModal();
   }
 
-  onMount(() => {
-    Meteor.subscribe("allCandidates");
-    Tracker.autorun(() => {
-      candidates = CandidateCollection.find(
-        {},
-        { sort: Session.get("sort") || {} }
-      ).fetch();
-    });
-  });
+  function sort(column) {
+    let sortOption = {};
+    sortOption[column] = Session.get("sort")?.[column] === 1 ? -1 : 1;
+    Session.set("sort", sortOption);
+  }
 
-  // function sort(column) {
-  //   let sortOption = {};
-  //   sortOption[column] = Session.get("sort")?.[column] === 1 ? -1 : 1;
-  //   Session.set("sort", sortOption);
-  // }
   function filter(event) {
-  const filterValue = event.target.value.toLowerCase();
-  candidates = CandidateCollection.find({
-    name: { $regex: filterValue, $options: "i" },
-  }).fetch();
+    const filterValue = event.target.value.toLowerCase();
+
+    // Fetch skills that match the filter
+    const filteredSkills = SkillCollection.find({
+      "skillList.name": { $regex: filterValue, $options: "i" },
+    }).fetch();
+
+    // Extract candidate IDs from the skills
+    const candidateIdsFromSkills = filteredSkills.map(
+      (skill) => skill.candidateId
+    );
+
+    // Fetch candidates whose name matches the filter or who have a matching skill
+    candidates = CandidateCollection.find({
+      $or: [
+        { name: { $regex: filterValue, $options: "i" } },
+        { _id: { $in: candidateIdsFromSkills } },
+      ],
+    }).fetch();
   }
 </script>
 
@@ -85,10 +95,9 @@
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-4xl font-semibold leading-6">Candidates</h1>
-      <p class="mt-2 text-lg text-gray-700 pt-2">Enter your candidates here</p>
     </div>
   </div>
-  <div class="flex items-center pt-4 gap-4">
+  <div class="flex items-center pt-4 gap-4 mt-4">
     <div class="pb-4">Filter By</div>
     <div class="w-[224px]">
       <input
@@ -106,26 +115,32 @@
           <thead>
             <tr>
               <th
+                on:click={() => sort("name")}
                 class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                 >Name</th
               >
               <th
+                on:click={() => sort("role")}
                 class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                 >Role</th
               >
               <th
+                on:click={() => sort("recruitmentStep")}
                 class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                 >Recruitment Step</th
               >
               <th
+                on:click={() => sort("salaryRequirement")}
                 class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                 >Salary Requirement</th
               >
               <th
+                on:click={() => sort("skills")}
                 class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                 >Skills</th
               >
               <th
+                on:click={() => sort("score")}
                 class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                 >Score</th
               >
@@ -144,14 +159,14 @@
                 >
                 {#each skills as skill}
                   {#if skill.candidateId === candidate._id}
-                  {#if skill.skillList.length > 0}
-                  <td class="px-6 py-4 whitespace-no-wrap"
-                  >{skill.skillList?.[0].name}</td
-                  >
-                  <td class="px-6 py-4 whitespace-no-wrap"
-                  >{skill.skillList?.[0].score}</td
-                  >
-                  {/if}
+                    {#if skill.skillList.length > 0}
+                      <td class="px-6 py-4 whitespace-no-wrap"
+                        >{skill.skillList?.[0].name}</td
+                      >
+                      <td class="px-6 py-4 whitespace-no-wrap"
+                        >{skill.skillList?.[0].score}</td
+                      >
+                    {/if}
                   {/if}
                 {/each}
               </tr>

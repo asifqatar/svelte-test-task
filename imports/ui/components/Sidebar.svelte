@@ -236,10 +236,10 @@
             <ul role="list" class="-mx-2 space-y-1">
               <li>
                 <Link to="jobs"
-                  class="bg-gray-50 text-indigo-600 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                  class="bg-gray-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                 >
                   <svg
-                    class="h-6 w-6 shrink-0 text-indigo-600"
+                    class="h-6 w-6 shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
@@ -258,10 +258,10 @@
               <li>
                 <Link
                   to="/candidates"
-                  class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50  group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                  class="text-gray-700 text-indigo-600 hover:text-indigo-600 hover:bg-gray-50  group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                 >
                   <svg
-                    class="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                    class="h-6 w-6 shrink-0 text-indigo-600 text-gray-400 group-hover:text-indigo-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
