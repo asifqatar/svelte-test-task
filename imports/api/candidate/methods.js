@@ -22,10 +22,6 @@ export async function findById(_id) {
   return CandidateCollection.findOneAsync(_id);
 }
 
-// export async function createSkill(data) {
-//   return SkillCollection.insertAsync({ ...data });
-// }
-
 export async function createSkill(candidateId, skillData) {
   const formattedSkill = {
     candidateId: candidateId,
