@@ -94,7 +94,7 @@
 <div class="px-4 pt-6 sm:px-6 lg:px-4">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-4xl font-semibold leading-6">Candidates</h1>
+      <h1 class="text-4xl font-semibold leading-6">Candidates List</h1>
     </div>
   </div>
   <div class="flex items-center pt-4 gap-4 mt-4">
